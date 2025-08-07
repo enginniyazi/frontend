@@ -66,19 +66,48 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
-      await fetchCourses(); // Listeyi yenile
+      setCourses((prevCourses) =>
+        prevCourses.map((c) =>
+          c._id === courseId ? { ...c, isPublished: !c.isPublished } : c
+        )
+      );
+      // await fetchCourses(); // Listeyi yenile
     } catch (err) {
       alert(`Hata: ${err instanceof Error ? err.message : "Bir hata oluştu."}`);
     }
   };
 
+  const handleDelete = async (courseId: string) => {
+    if (
+      !window.confirm(
+        "Bu kursu kalıcı olarak silmek istediğinizden emin misiniz?"
+      )
+    )
+      return;
+    try {
+      const token = localStorage.getItem("yowa_token");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      await fetch(`${apiUrl}/api/courses/${courseId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Arayüzü anında güncelle
+      setCourses((prevCourses) =>
+        prevCourses.filter((c) => c._id !== courseId)
+      );
+    } catch (err) {
+      alert(`Hata: ${err instanceof Error ? err.message : "Bilinmeyen hata"}`);
+    }
+  };
   if (loading) return <p>Kurslar yükleniyor...</p>;
   if (error) return <p className="text-red-500">Hata: {error}</p>;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Kurslarım</h1>
+        <h1 className="text-3xl font-bold">
+          {mode === "my-courses" ? "Kurslarım" : "Tüm Kurslar"}
+        </h1>
         {/* "Yeni Kurs Ekle" butonu sadece yetkili rollerde görünmeli */}
         {user && (user.role === "Admin" || user.role === "Instructor") && (
           <Link
@@ -137,7 +166,7 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
                       onClick={() =>
                         handleTogglePublish(course._id, course.isPublished)
                       }
-                      className={`font-medium ${
+                      className={`font-medium w-16 text-sm ${
                         course.isPublished
                           ? "text-yellow-600 hover:text-yellow-700"
                           : "text-green-600 hover:text-green-700"
@@ -145,9 +174,15 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
                     >
                       {course.isPublished ? "Kaldır" : "Yayınla"}
                     </button>
+                    <button
+                      onClick={() => handleDelete(course._id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      Sil
+                    </button>
                     <Link
                       href={`/dashboard/courses/${course._id}`}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="text-indigo-600 hover:text-indigo-900 text-sm"
                     >
                       Düzenle
                     </Link>
@@ -187,8 +222,23 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
                   )}
                 </div>
                 <div className="space-x-4">
-                  <button className="text-red-600 hover:text-red-700 text-sm">
+                  <button
+                    onClick={() =>
+                      handleTogglePublish(course._id, course.isPublished)
+                    }
+                    className={`font-medium w-16 text-sm ${
+                      course.isPublished
+                        ? "text-yellow-600 hover:text-yellow-700"
+                        : "text-green-600 hover:text-green-700"
+                    }`}
+                  >
                     {course.isPublished ? "Kaldır" : "Yayınla"}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(course._id)}
+                    className="text-red-600 hover:text-red-700 text-sm"
+                  >
+                    Sil
                   </button>
                   <Link
                     href={`/dashboard/courses/${course._id}`}
