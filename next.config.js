@@ -12,6 +12,12 @@ const nextConfig = {
         port: '5001',
         pathname: '/uploads/**', // /uploads/ ile başlayan tüm yollara izin ver
       },
+      {
+        protocol: 'https',
+        hostname: 'backend-fnun.onrender.com/',
+        port: '', // Port belirtmeye gerek yok (standart 443)
+        pathname: '/uploads/**',
+      },
     ],
   },
 }
