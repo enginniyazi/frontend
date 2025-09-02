@@ -11,7 +11,7 @@ async function getLatestCourses(): Promise<Course[]> {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!apiUrl) throw new Error("API_URL not configured");
-    const res = await fetch(`${apiUrl}/api/courses?limit=6`, {
+    const res = await fetch(`${apiUrl}/api/courses`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
@@ -46,8 +46,6 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestCourses.map((course) => {
-                const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
                 return <CourseCard key={course._id} course={{ ...course }} />;
               })}
             </div>

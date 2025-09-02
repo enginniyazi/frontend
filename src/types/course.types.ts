@@ -1,8 +1,8 @@
 // src/types/course.types.ts
 
 // Diğer tipleri kendi dosyalarından import etmek en temiz yoldur.
-import type { User } from './user.types'; 
-import type { Category } from './category.types'; 
+import type { User } from './user.types';
+import type { Category } from './category.types';
 
 export interface Course {
   _id: string;
@@ -16,10 +16,12 @@ export interface Course {
   sections: {
     _id: string;
     title: string;
+    order: number;
     lectures: {
       _id: string;
       title: string;
       duration: number;
+      order: number;
     }[];
   }[];
   createdAt: string;

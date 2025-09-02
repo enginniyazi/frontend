@@ -14,7 +14,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'backend-fnun.onrender.com/',
+        hostname: 'backendapi.yowaacademy.com/',
         port: '', // Port belirtmeye gerek yok (standart 443)
         pathname: '/uploads/**',
       },

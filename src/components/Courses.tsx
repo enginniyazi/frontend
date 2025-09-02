@@ -5,7 +5,7 @@ async function getCourses(): Promise<Course[]> {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!apiUrl) throw new Error("API_URL not configured");
-    const res = await fetch(`${apiUrl}/api/courses?limit=6`, {
+    const res = await fetch(`${apiUrl}/api/courses`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
@@ -15,6 +15,7 @@ async function getCourses(): Promise<Course[]> {
     return [];
   }
 }
+
 export default async function Courses() {
   const courses = await getCourses();
   return (

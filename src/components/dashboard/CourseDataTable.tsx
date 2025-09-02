@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Course, User } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import Image from "next/image";
 
 interface CourseDataTableProps {
   mode: "my-courses" | "courses"; // Hangi modda çalışacağını belirten prop
@@ -123,6 +124,9 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                Kapak Resmi
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Başlık
               </th>
               {mode === "courses" && (
@@ -140,55 +144,74 @@ export default function CourseDataTable({ mode }: CourseDataTableProps) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {courses.length > 0 ? (
-              courses.map((course) => (
-                <tr key={course._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {course.title}
-                  </td>
-                  {mode === "courses" && (
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {course.instructor.name}
+              courses.map((course) => {
+                const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+                const imageUrl = `${baseUrl}/${course.coverImage}`;
+                return (
+                  <tr key={course._id}>
+                    <td>
+                      <Image
+                        src={imageUrl}
+                        alt={course.title}
+                        width={50}
+                        height={50}
+                        className="object-cover"
+                      />
                     </td>
-                  )}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {course.isPublished ? (
-                      <span className="px-2 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                        Yayında
-                      </span>
-                    ) : (
-                      <span className="px-2 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                        Taslak
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {course.title}
+                    </td>
+                    {mode === "courses" && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.instructor.name}
+                      </td>
                     )}
-                  </td>
-                  <td className="px-6 py-4 space-x-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() =>
-                        handleTogglePublish(course._id, course.isPublished)
-                      }
-                      className={`font-medium w-16 text-sm ${
-                        course.isPublished
-                          ? "text-yellow-600 hover:text-yellow-700"
-                          : "text-green-600 hover:text-green-700"
-                      }`}
-                    >
-                      {course.isPublished ? "Kaldır" : "Yayınla"}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(course._id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Sil
-                    </button>
-                    <Link
-                      href={`/dashboard/courses/${course._id}`}
-                      className="text-indigo-600 hover:text-indigo-900 text-sm"
-                    >
-                      Düzenle
-                    </Link>
-                  </td>
-                </tr>
-              ))
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {course.isPublished ? (
+                        <span className="px-2 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                          Yayında
+                        </span>
+                      ) : (
+                        <span className="px-2 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          Taslak
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 space-x-4 whitespace-nowrap text-sm">
+                      <button
+                        onClick={() =>
+                          handleTogglePublish(course._id, course.isPublished)
+                        }
+                        className={`font-medium w-16 text-sm ${
+                          course.isPublished
+                            ? "text-yellow-600 hover:text-yellow-700"
+                            : "text-green-600 hover:text-green-700"
+                        }`}
+                      >
+                        {course.isPublished ? "Kaldır" : "Yayınla"}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(course._id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        Sil
+                      </button>
+                      <Link
+                        href={`/dashboard/courses/edit/${course._id}`}
+                        className="text-indigo-600 hover:text-indigo-900 text-sm"
+                      >
+                        Düzenle
+                      </Link>
+                      <Link
+                        href={`/dashboard/courses/content/${course._id}`}
+                        className="text-indigo-600 hover:text-indigo-900 text-sm"
+                      >
+                        İçerik Yönetimi
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td

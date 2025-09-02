@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Course } from "@/types";
 import Link from "next/link";
-import SectionEditor from "./SectionEditor"; // Yeni bileşenimizi import ediyoruz
+import SectionEditor from "./SectionEditor";
 
 export default function CourseManagementPage() {
   const router = useRouter();
